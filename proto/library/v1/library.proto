@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "/pb";
+
+service LibraryService {
+  // User operations
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+
+  // Book operations
+  rpc CreateBook(CreateBookRequest) returns (CreateBookResponse);
+  rpc GetBook(GetBookRequest) returns (GetBookResponse);
+  rpc ListBooks(ListBooksRequest) returns (ListBooksResponse);
+  rpc BorrowBook(BorrowBookRequest) returns (BorrowBookResponse);
+  rpc ReturnBook(ReturnBookRequest) returns (ReturnBookResponse);
+}
+
+// User-related messages
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  // Password is never returned
+}
+
+message RegisterUserRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message RegisterUserResponse {
+  User user = 1;
+}
+
+message LoginUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  User user = 1;
+  string token = 2; // JWT token for authentication
+}
+
+// Book-related messages
+message Book {
+  string id = 1;
+  string title = 2;
+  string author = 3;
+  string isbn = 4;
+  bool available = 5;
+}
+
+message CreateBookRequest {
+  Book book = 1;
+}
+
+message CreateBookResponse {
+  Book book = 1;
+}
+
+message GetBookRequest {
+  string id = 1;
+}
+
+message GetBookResponse {
+  Book book = 1;
+}
+
+message ListBooksRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListBooksResponse {
+  repeated Book books = 1;
+  string next_page_token = 2;
+}
+
+message BorrowBookRequest {
+  string user_id = 1;
+  string book_id = 2;
+}
+
+message BorrowBookResponse {
+  string borrow_id = 1;
+  string due_date = 2; // ISO format date
+}
+
+message ReturnBookRequest {
+  string borrow_id = 1;
+}
+
+message ReturnBookResponse {
+  bool success = 1;
+}
