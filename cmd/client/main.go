@@ -109,14 +109,14 @@ func main() {
 	borrowID := borrowResp.BorrowId
 	fmt.Println("Book returned successfully: %v\n", borrowID)
 	// 7. Return the book
-	//fmt.Println("\n[7] Returning the book...")
-	//returnResp, err := client.ReturnBook(ctx, &pb.ReturnBookRequest{
-	//	BorrowId: borrowID,
-	//})
-	//if err != nil {
-	//	log.Fatalf("ReturnBook failed: %v", err)
-	//}
-	//fmt.Printf("Book returned successfully: %v\n", returnResp.Success)
+	fmt.Println("\n[7] Returning the book...")
+	returnResp, err := client.ReturnBook(ctx, &pb.ReturnBookRequest{
+		BorrowId: borrowID,
+	})
+	if err != nil {
+		log.Fatalf("ReturnBook failed: %v", err)
+	}
+	fmt.Printf("Book returned successfully: %v\n", returnResp.Success)
 
 	fmt.Println("\nAll tests completed successfully!")
 }

@@ -1,41 +1,27 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net"
-	"os"
-
 	"google.golang.org/grpc"
 	"library-management-service/internal/database"
 	"library-management-service/internal/repository"
+	"library-management-service/internal/server"
 	"library-management-service/internal/service"
 	pb "library-management-service/proto/library/v1"
+	"log"
+	"net"
 )
 
 func main() {
-	// Get database connection string from environment or use default
-	dbConnString := os.Getenv("DATABASE_URL")
-	if dbConnString == "" {
-		dbConnString = "postgresql://postgres:postgres@localhost:5432/library?sslmode=disable"
-	}
-
-	// Set up gRPC server port
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "50051"
-	}
-
-	// Connect to database
-	db, err := database.NewDB(dbConnString)
+	// Initialize database
+	db, err := database.NewDB("postgres://postgres:password@localhost:5432/library")
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
-	// Set up database schema
+	// Setup schema
 	if err := db.SetupSchema(); err != nil {
-		log.Fatalf("Failed to set up database schema: %v", err)
+		log.Fatalf("Failed to setup database schema: %v", err)
 	}
 
 	// Initialize repositories
@@ -45,8 +31,15 @@ func main() {
 	// Initialize service
 	libraryService := service.NewLibraryService(*userRepo, *bookRepo)
 
-	// Create gRPC server
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+	// Start gRPC server in a goroutine
+	go startGRPCServer(libraryService)
+
+	// Start REST server
+	startRESTServer(libraryService)
+}
+
+func startGRPCServer(libraryService *service.LibraryService) {
+	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -54,8 +47,17 @@ func main() {
 	grpcServer := grpc.NewServer()
 	pb.RegisterLibraryServiceServer(grpcServer, libraryService)
 
-	log.Printf("Starting gRPC server on port %s", port)
+	log.Println("gRPC server is running on :50051")
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
+	}
+}
+
+func startRESTServer(libraryService *service.LibraryService) {
+	restServer := server.NewRESTServer(libraryService)
+
+	log.Println("REST server is running on :8086")
+	if err := restServer.Start(":8086"); err != nil {
+		log.Fatalf("Failed to serve REST: %v", err)
 	}
 }
