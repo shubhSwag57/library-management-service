@@ -10,7 +10,7 @@ import (
 	"library-management-service/internal/database"
 	pb "library-management-service/proto/library/v1"
 )
-
+	
 type UserRepository struct {
 	db *database.DB
 }

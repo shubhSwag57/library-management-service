@@ -17,10 +17,16 @@ type LibraryService struct {
 	bookRepo *repository.BookRepository
 }
 
-func NewLibraryService(userRepo *repository.UserRepository, bookRepo *repository.BookRepository) *LibraryService {
+//	func NewLibraryService(userRepo *repository.UserRepository, bookRepo *repository.BookRepository) *LibraryService {
+//		return &LibraryService{
+//			userRepo: userRepo,
+//			bookRepo: bookRepo,
+//		}
+//	}
+func NewLibraryService(userRepo repository.UserRepository, bookRepo repository.BookRepository) *LibraryService {
 	return &LibraryService{
-		userRepo: userRepo,
-		bookRepo: bookRepo,
+		userRepo: &userRepo,
+		bookRepo: &bookRepo,
 	}
 }
 

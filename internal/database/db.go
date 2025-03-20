@@ -4,12 +4,27 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-type DB struct {
-	Pool *pgxpool.Pool
+type PgxPool interface {
+	Acquire(context.Context) (*pgxpool.Conn, error)
+	Close()
+	Exec(context.Context, string, ...interface{}) (pgconn.CommandTag, error)
+	Query(context.Context, string, ...interface{}) (pgx.Rows, error)
+	QueryRow(context.Context, string, ...interface{}) pgx.Row
 }
+
+// DB represents the database connection
+type DB struct {
+	Pool PgxPool
+}
+
+//type DB struct {
+//	Pool *pgxpool.Pool
+//}
 
 func NewDB(connString string) (*DB, error) {
 	config, err := pgxpool.ParseConfig(connString)

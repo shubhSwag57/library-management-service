@@ -43,7 +43,7 @@ func main() {
 	bookRepo := repository.NewBookRepository(db)
 
 	// Initialize service
-	libraryService := service.NewLibraryService(userRepo, bookRepo)
+	libraryService := service.NewLibraryService(*userRepo, *bookRepo)
 
 	// Create gRPC server
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))

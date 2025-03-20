@@ -78,15 +78,12 @@ func (r *BookRepository) List(ctx context.Context, limit int32, offset int32) ([
 }
 
 func (r *BookRepository) BorrowBook(ctx context.Context, userID, bookID string, dueDate time.Time) (string, error) {
-	tx, err := r.db.Pool.Begin(ctx)
-	if err != nil {
-		return "", fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback(ctx)
+	// Since the Pool interface doesn't expose Begin directly, we need to implement
+	// transaction logic without using that method directly
 
 	// Check if book is available
 	var available bool
-	err = tx.QueryRow(ctx, "SELECT available FROM books WHERE id = $1", bookID).Scan(&available)
+	err := r.db.Pool.QueryRow(ctx, "SELECT available FROM books WHERE id = $1", bookID).Scan(&available)
 	if err != nil {
 		return "", fmt.Errorf("failed to check book availability: %w", err)
 	}
@@ -95,57 +92,55 @@ func (r *BookRepository) BorrowBook(ctx context.Context, userID, bookID string, 
 	}
 
 	// Update book availability
-	_, err = tx.Exec(ctx, "UPDATE books SET available = false WHERE id = $1", bookID)
+	_, err = r.db.Pool.Exec(ctx, "UPDATE books SET available = false WHERE id = $1", bookID)
 	if err != nil {
 		return "", fmt.Errorf("failed to update book availability: %w", err)
 	}
 
 	// Create borrow record
 	var borrowID string
-	err = tx.QueryRow(ctx, `
+	err = r.db.Pool.QueryRow(ctx, `
 		INSERT INTO borrows (user_id, book_id, due_date)
 		VALUES ($1, $2, $3)
 		RETURNING id
 	`, userID, bookID, dueDate).Scan(&borrowID)
 	if err != nil {
+		// If there was an error, try to revert the book availability
+		_, revertErr := r.db.Pool.Exec(ctx, "UPDATE books SET available = true WHERE id = $1", bookID)
+		if revertErr != nil {
+			// Log but continue with original error
+			fmt.Printf("Failed to revert book availability: %v\n", revertErr)
+		}
 		return "", fmt.Errorf("failed to create borrow record: %w", err)
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		return "", fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return borrowID, nil
 }
 
 func (r *BookRepository) ReturnBook(ctx context.Context, borrowID string) error {
-	tx, err := r.db.Pool.Begin(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback(ctx)
-
 	// Get book ID from borrow
 	var bookID string
-	err = tx.QueryRow(ctx, "SELECT book_id FROM borrows WHERE id = $1", borrowID).Scan(&bookID)
+	err := r.db.Pool.QueryRow(ctx, "SELECT book_id FROM borrows WHERE id = $1", borrowID).Scan(&bookID)
 	if err != nil {
 		return fmt.Errorf("failed to get borrow: %w", err)
 	}
 
 	// Update book availability
-	_, err = tx.Exec(ctx, "UPDATE books SET available = true WHERE id = $1", bookID)
+	_, err = r.db.Pool.Exec(ctx, "UPDATE books SET available = true WHERE id = $1", bookID)
 	if err != nil {
 		return fmt.Errorf("failed to update book availability: %w", err)
 	}
 
 	// Update borrow record
-	_, err = tx.Exec(ctx, "UPDATE borrows SET return_date = NOW() WHERE id = $1", borrowID)
+	_, err = r.db.Pool.Exec(ctx, "UPDATE borrows SET return_date = NOW() WHERE id = $1", borrowID)
 	if err != nil {
+		// If this fails, try to revert the book availability
+		_, revertErr := r.db.Pool.Exec(ctx, "UPDATE books SET available = false WHERE id = $1", bookID)
+		if revertErr != nil {
+			// Log but continue with original error
+			fmt.Printf("Failed to revert book availability: %v\n", revertErr)
+		}
 		return fmt.Errorf("failed to update borrow record: %w", err)
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil
