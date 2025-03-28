@@ -839,6 +839,102 @@ func (x *ReturnBookResponse) GetSuccess() bool {
 	return false
 }
 
+type CheckBookAvailabilityRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookId        string                 `protobuf:"bytes,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckBookAvailabilityRequest) Reset() {
+	*x = CheckBookAvailabilityRequest{}
+	mi := &file_proto_library_v1_library_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckBookAvailabilityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckBookAvailabilityRequest) ProtoMessage() {}
+
+func (x *CheckBookAvailabilityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_library_v1_library_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckBookAvailabilityRequest.ProtoReflect.Descriptor instead.
+func (*CheckBookAvailabilityRequest) Descriptor() ([]byte, []int) {
+	return file_proto_library_v1_library_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CheckBookAvailabilityRequest) GetBookId() string {
+	if x != nil {
+		return x.BookId
+	}
+	return ""
+}
+
+type CheckBookAvailabilityResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"` // Additional status information (e.g., "Available", "Borrowed", etc.)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckBookAvailabilityResponse) Reset() {
+	*x = CheckBookAvailabilityResponse{}
+	mi := &file_proto_library_v1_library_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckBookAvailabilityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckBookAvailabilityResponse) ProtoMessage() {}
+
+func (x *CheckBookAvailabilityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_library_v1_library_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckBookAvailabilityResponse.ProtoReflect.Descriptor instead.
+func (*CheckBookAvailabilityResponse) Descriptor() ([]byte, []int) {
+	return file_proto_library_v1_library_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *CheckBookAvailabilityResponse) GetAvailable() bool {
+	if x != nil {
+		return x.Available
+	}
+	return false
+}
+
+func (x *CheckBookAvailabilityResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
 var File_proto_library_v1_library_proto protoreflect.FileDescriptor
 
 var file_proto_library_v1_library_proto_rawDesc = string([]byte{
@@ -911,8 +1007,17 @@ var file_proto_library_v1_library_proto_rawDesc = string([]byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x62, 0x6f, 0x72, 0x72, 0x6f, 0x77, 0x49, 0x64, 0x22, 0x2e,
 	0x0a, 0x12, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x32, 0xb2,
-	0x03, 0x0a, 0x0e, 0x4c, 0x69, 0x62, 0x72, 0x61, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x37,
+	0x0a, 0x1c, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x42, 0x6f, 0x6f, 0x6b, 0x41, 0x76, 0x61, 0x69, 0x6c,
+	0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17,
+	0x0a, 0x07, 0x62, 0x6f, 0x6f, 0x6b, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x06, 0x62, 0x6f, 0x6f, 0x6b, 0x49, 0x64, 0x22, 0x55, 0x0a, 0x1d, 0x43, 0x68, 0x65, 0x63, 0x6b,
+	0x42, 0x6f, 0x6f, 0x6b, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x61, 0x76, 0x61, 0x69,
+	0x6c, 0x61, 0x62, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09, 0x61, 0x76, 0x61,
+	0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x32, 0x90,
+	0x04, 0x0a, 0x0e, 0x4c, 0x69, 0x62, 0x72, 0x61, 0x72, 0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
 	0x65, 0x12, 0x41, 0x0a, 0x0c, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x55, 0x73, 0x65,
 	0x72, 0x12, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x55,
 	0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x70, 0x62, 0x2e,
@@ -939,8 +1044,13 @@ var file_proto_library_v1_library_proto_rawDesc = string([]byte{
 	0x42, 0x6f, 0x6f, 0x6b, 0x12, 0x15, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e,
 	0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x62,
 	0x2e, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x42, 0x6f, 0x6f, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x42, 0x05, 0x5a, 0x03, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x6e, 0x73, 0x65, 0x12, 0x5c, 0x0a, 0x15, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x42, 0x6f, 0x6f, 0x6b,
+	0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x12, 0x20, 0x2e, 0x70,
+	0x62, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x42, 0x6f, 0x6f, 0x6b, 0x41, 0x76, 0x61, 0x69, 0x6c,
+	0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21,
+	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x42, 0x6f, 0x6f, 0x6b, 0x41, 0x76, 0x61,
+	0x69, 0x6c, 0x61, 0x62, 0x69, 0x6c, 0x69, 0x74, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x42, 0x05, 0x5a, 0x03, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 })
 
 var (
@@ -955,24 +1065,26 @@ func file_proto_library_v1_library_proto_rawDescGZIP() []byte {
 	return file_proto_library_v1_library_proto_rawDescData
 }
 
-var file_proto_library_v1_library_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_proto_library_v1_library_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_proto_library_v1_library_proto_goTypes = []any{
-	(*User)(nil),                 // 0: pb.User
-	(*RegisterUserRequest)(nil),  // 1: pb.RegisterUserRequest
-	(*RegisterUserResponse)(nil), // 2: pb.RegisterUserResponse
-	(*LoginUserRequest)(nil),     // 3: pb.LoginUserRequest
-	(*LoginUserResponse)(nil),    // 4: pb.LoginUserResponse
-	(*Book)(nil),                 // 5: pb.Book
-	(*CreateBookRequest)(nil),    // 6: pb.CreateBookRequest
-	(*CreateBookResponse)(nil),   // 7: pb.CreateBookResponse
-	(*GetBookRequest)(nil),       // 8: pb.GetBookRequest
-	(*GetBookResponse)(nil),      // 9: pb.GetBookResponse
-	(*ListBooksRequest)(nil),     // 10: pb.ListBooksRequest
-	(*ListBooksResponse)(nil),    // 11: pb.ListBooksResponse
-	(*BorrowBookRequest)(nil),    // 12: pb.BorrowBookRequest
-	(*BorrowBookResponse)(nil),   // 13: pb.BorrowBookResponse
-	(*ReturnBookRequest)(nil),    // 14: pb.ReturnBookRequest
-	(*ReturnBookResponse)(nil),   // 15: pb.ReturnBookResponse
+	(*User)(nil),                          // 0: pb.User
+	(*RegisterUserRequest)(nil),           // 1: pb.RegisterUserRequest
+	(*RegisterUserResponse)(nil),          // 2: pb.RegisterUserResponse
+	(*LoginUserRequest)(nil),              // 3: pb.LoginUserRequest
+	(*LoginUserResponse)(nil),             // 4: pb.LoginUserResponse
+	(*Book)(nil),                          // 5: pb.Book
+	(*CreateBookRequest)(nil),             // 6: pb.CreateBookRequest
+	(*CreateBookResponse)(nil),            // 7: pb.CreateBookResponse
+	(*GetBookRequest)(nil),                // 8: pb.GetBookRequest
+	(*GetBookResponse)(nil),               // 9: pb.GetBookResponse
+	(*ListBooksRequest)(nil),              // 10: pb.ListBooksRequest
+	(*ListBooksResponse)(nil),             // 11: pb.ListBooksResponse
+	(*BorrowBookRequest)(nil),             // 12: pb.BorrowBookRequest
+	(*BorrowBookResponse)(nil),            // 13: pb.BorrowBookResponse
+	(*ReturnBookRequest)(nil),             // 14: pb.ReturnBookRequest
+	(*ReturnBookResponse)(nil),            // 15: pb.ReturnBookResponse
+	(*CheckBookAvailabilityRequest)(nil),  // 16: pb.CheckBookAvailabilityRequest
+	(*CheckBookAvailabilityResponse)(nil), // 17: pb.CheckBookAvailabilityResponse
 }
 var file_proto_library_v1_library_proto_depIdxs = []int32{
 	0,  // 0: pb.RegisterUserResponse.user:type_name -> pb.User
@@ -988,15 +1100,17 @@ var file_proto_library_v1_library_proto_depIdxs = []int32{
 	10, // 10: pb.LibraryService.ListBooks:input_type -> pb.ListBooksRequest
 	12, // 11: pb.LibraryService.BorrowBook:input_type -> pb.BorrowBookRequest
 	14, // 12: pb.LibraryService.ReturnBook:input_type -> pb.ReturnBookRequest
-	2,  // 13: pb.LibraryService.RegisterUser:output_type -> pb.RegisterUserResponse
-	4,  // 14: pb.LibraryService.LoginUser:output_type -> pb.LoginUserResponse
-	7,  // 15: pb.LibraryService.CreateBook:output_type -> pb.CreateBookResponse
-	9,  // 16: pb.LibraryService.GetBook:output_type -> pb.GetBookResponse
-	11, // 17: pb.LibraryService.ListBooks:output_type -> pb.ListBooksResponse
-	13, // 18: pb.LibraryService.BorrowBook:output_type -> pb.BorrowBookResponse
-	15, // 19: pb.LibraryService.ReturnBook:output_type -> pb.ReturnBookResponse
-	13, // [13:20] is the sub-list for method output_type
-	6,  // [6:13] is the sub-list for method input_type
+	16, // 13: pb.LibraryService.CheckBookAvailability:input_type -> pb.CheckBookAvailabilityRequest
+	2,  // 14: pb.LibraryService.RegisterUser:output_type -> pb.RegisterUserResponse
+	4,  // 15: pb.LibraryService.LoginUser:output_type -> pb.LoginUserResponse
+	7,  // 16: pb.LibraryService.CreateBook:output_type -> pb.CreateBookResponse
+	9,  // 17: pb.LibraryService.GetBook:output_type -> pb.GetBookResponse
+	11, // 18: pb.LibraryService.ListBooks:output_type -> pb.ListBooksResponse
+	13, // 19: pb.LibraryService.BorrowBook:output_type -> pb.BorrowBookResponse
+	15, // 20: pb.LibraryService.ReturnBook:output_type -> pb.ReturnBookResponse
+	17, // 21: pb.LibraryService.CheckBookAvailability:output_type -> pb.CheckBookAvailabilityResponse
+	14, // [14:22] is the sub-list for method output_type
+	6,  // [6:14] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -1013,7 +1127,7 @@ func file_proto_library_v1_library_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_library_v1_library_proto_rawDesc), len(file_proto_library_v1_library_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

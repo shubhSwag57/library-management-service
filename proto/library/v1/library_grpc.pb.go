@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LibraryService_RegisterUser_FullMethodName = "/pb.LibraryService/RegisterUser"
-	LibraryService_LoginUser_FullMethodName    = "/pb.LibraryService/LoginUser"
-	LibraryService_CreateBook_FullMethodName   = "/pb.LibraryService/CreateBook"
-	LibraryService_GetBook_FullMethodName      = "/pb.LibraryService/GetBook"
-	LibraryService_ListBooks_FullMethodName    = "/pb.LibraryService/ListBooks"
-	LibraryService_BorrowBook_FullMethodName   = "/pb.LibraryService/BorrowBook"
-	LibraryService_ReturnBook_FullMethodName   = "/pb.LibraryService/ReturnBook"
+	LibraryService_RegisterUser_FullMethodName          = "/pb.LibraryService/RegisterUser"
+	LibraryService_LoginUser_FullMethodName             = "/pb.LibraryService/LoginUser"
+	LibraryService_CreateBook_FullMethodName            = "/pb.LibraryService/CreateBook"
+	LibraryService_GetBook_FullMethodName               = "/pb.LibraryService/GetBook"
+	LibraryService_ListBooks_FullMethodName             = "/pb.LibraryService/ListBooks"
+	LibraryService_BorrowBook_FullMethodName            = "/pb.LibraryService/BorrowBook"
+	LibraryService_ReturnBook_FullMethodName            = "/pb.LibraryService/ReturnBook"
+	LibraryService_CheckBookAvailability_FullMethodName = "/pb.LibraryService/CheckBookAvailability"
 )
 
 // LibraryServiceClient is the client API for LibraryService service.
@@ -41,6 +42,7 @@ type LibraryServiceClient interface {
 	ListBooks(ctx context.Context, in *ListBooksRequest, opts ...grpc.CallOption) (*ListBooksResponse, error)
 	BorrowBook(ctx context.Context, in *BorrowBookRequest, opts ...grpc.CallOption) (*BorrowBookResponse, error)
 	ReturnBook(ctx context.Context, in *ReturnBookRequest, opts ...grpc.CallOption) (*ReturnBookResponse, error)
+	CheckBookAvailability(ctx context.Context, in *CheckBookAvailabilityRequest, opts ...grpc.CallOption) (*CheckBookAvailabilityResponse, error)
 }
 
 type libraryServiceClient struct {
@@ -121,6 +123,16 @@ func (c *libraryServiceClient) ReturnBook(ctx context.Context, in *ReturnBookReq
 	return out, nil
 }
 
+func (c *libraryServiceClient) CheckBookAvailability(ctx context.Context, in *CheckBookAvailabilityRequest, opts ...grpc.CallOption) (*CheckBookAvailabilityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckBookAvailabilityResponse)
+	err := c.cc.Invoke(ctx, LibraryService_CheckBookAvailability_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LibraryServiceServer is the server API for LibraryService service.
 // All implementations must embed UnimplementedLibraryServiceServer
 // for forward compatibility.
@@ -134,6 +146,7 @@ type LibraryServiceServer interface {
 	ListBooks(context.Context, *ListBooksRequest) (*ListBooksResponse, error)
 	BorrowBook(context.Context, *BorrowBookRequest) (*BorrowBookResponse, error)
 	ReturnBook(context.Context, *ReturnBookRequest) (*ReturnBookResponse, error)
+	CheckBookAvailability(context.Context, *CheckBookAvailabilityRequest) (*CheckBookAvailabilityResponse, error)
 	mustEmbedUnimplementedLibraryServiceServer()
 }
 
@@ -164,6 +177,9 @@ func (UnimplementedLibraryServiceServer) BorrowBook(context.Context, *BorrowBook
 }
 func (UnimplementedLibraryServiceServer) ReturnBook(context.Context, *ReturnBookRequest) (*ReturnBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReturnBook not implemented")
+}
+func (UnimplementedLibraryServiceServer) CheckBookAvailability(context.Context, *CheckBookAvailabilityRequest) (*CheckBookAvailabilityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckBookAvailability not implemented")
 }
 func (UnimplementedLibraryServiceServer) mustEmbedUnimplementedLibraryServiceServer() {}
 func (UnimplementedLibraryServiceServer) testEmbeddedByValue()                        {}
@@ -312,6 +328,24 @@ func _LibraryService_ReturnBook_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LibraryService_CheckBookAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckBookAvailabilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LibraryServiceServer).CheckBookAvailability(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LibraryService_CheckBookAvailability_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LibraryServiceServer).CheckBookAvailability(ctx, req.(*CheckBookAvailabilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LibraryService_ServiceDesc is the grpc.ServiceDesc for LibraryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -346,6 +380,10 @@ var LibraryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReturnBook",
 			Handler:    _LibraryService_ReturnBook_Handler,
+		},
+		{
+			MethodName: "CheckBookAvailability",
+			Handler:    _LibraryService_CheckBookAvailability_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

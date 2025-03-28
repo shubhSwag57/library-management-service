@@ -13,8 +13,8 @@ import (
 
 type LibraryService struct {
 	pb.UnimplementedLibraryServiceServer
-	userRepo *repository.UserRepository
-	bookRepo *repository.BookRepository
+	userRepo repository.UserRepositoryInterface
+	bookRepo repository.BookRepositoryInterface
 }
 
 //	func NewLibraryService(userRepo *repository.UserRepository, bookRepo *repository.BookRepository) *LibraryService {
@@ -23,10 +23,10 @@ type LibraryService struct {
 //			bookRepo: bookRepo,
 //		}
 //	}
-func NewLibraryService(userRepo repository.UserRepository, bookRepo repository.BookRepository) *LibraryService {
+func NewLibraryService(userRepo repository.UserRepositoryInterface, bookRepo repository.BookRepositoryInterface) *LibraryService {
 	return &LibraryService{
-		userRepo: &userRepo,
-		bookRepo: &bookRepo,
+		userRepo: userRepo,
+		bookRepo: bookRepo,
 	}
 }
 
@@ -155,5 +155,26 @@ func (s *LibraryService) ReturnBook(ctx context.Context, req *pb.ReturnBookReque
 
 	return &pb.ReturnBookResponse{
 		Success: true,
+	}, nil
+}
+
+func (s *LibraryService) CheckBookAvailability(ctx context.Context, req *pb.CheckBookAvailabilityRequest) (*pb.CheckBookAvailabilityResponse, error) {
+	if req.BookId == "" {
+		return nil, status.Error(codes.InvalidArgument, "book id is required")
+	}
+
+	book, err := s.bookRepo.GetByID(ctx, req.BookId)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "book not found: %v", err)
+	}
+
+	statusMsg := "Borrowed"
+	if book.Available {
+		statusMsg = "Available"
+	}
+
+	return &pb.CheckBookAvailabilityResponse{
+		Available: book.Available,
+		Status:    statusMsg,
 	}, nil
 }

@@ -14,6 +14,8 @@ service LibraryService {
   rpc ListBooks(ListBooksRequest) returns (ListBooksResponse);
   rpc BorrowBook(BorrowBookRequest) returns (BorrowBookResponse);
   rpc ReturnBook(ReturnBookRequest) returns (ReturnBookResponse);
+  rpc CheckBookAvailability(CheckBookAvailabilityRequest) returns (CheckBookAvailabilityResponse);
+
 }
 
 // User-related messages
@@ -95,4 +97,13 @@ message ReturnBookRequest {
 
 message ReturnBookResponse {
   bool success = 1;
+}
+
+message CheckBookAvailabilityRequest {
+  string book_id = 1;
+}
+
+message CheckBookAvailabilityResponse {
+  bool available = 1;
+  string status = 2; // Additional status information (e.g., "Available", "Borrowed", etc.)
 }

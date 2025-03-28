@@ -3,6 +3,8 @@ package server
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"library-management-service/internal/service"
 	pb "library-management-service/proto/library/v1"
 	"net/http"
@@ -24,15 +26,17 @@ func NewRESTServer(libraryService *service.LibraryService) *RESTServer {
 
 func (s *RESTServer) setupRoutes() {
 	// User routes
-	s.router.POST("/api/users/register", s.registerUser)
-	s.router.POST("/api/users/login", s.loginUser)
+	s.router.POST("/api/users/registerUser", s.registerUser)
+	s.router.POST("/api/users/loginUser", s.loginUser)
 
 	// Book routes
 	s.router.POST("/api/books", s.createBook)
 	s.router.GET("/api/books/:id", s.getBook)
 	s.router.GET("/api/books", s.listBooks)
-	s.router.POST("/api/books/:id/borrow", s.borrowBook)
-	s.router.POST("/api/books/return", s.returnBook)
+	s.router.POST("/api/books/:id/borrowBook", s.borrowBook)
+	s.router.POST("/api/books/returnBook", s.returnBook)
+	s.router.GET("/api/books/:id/availability", s.checkBookAvailability)
+
 }
 
 func (s *RESTServer) Start(addr string) error {
@@ -255,4 +259,28 @@ func parseInt32(s string) (int32, error) {
 	var result int
 	err := json.Unmarshal([]byte(s), &result)
 	return int32(result), err
+}
+
+func (s *RESTServer) checkBookAvailability(c *gin.Context) {
+	bookID := c.Param("id")
+
+	grpcReq := &pb.CheckBookAvailabilityRequest{
+		BookId: bookID,
+	}
+
+	response, err := s.libraryService.CheckBookAvailability(c.Request.Context(), grpcReq)
+	if err != nil {
+		status, ok := status.FromError(err)
+		if ok && status.Code() == codes.NotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"available": response.Available,
+		"status":    response.Status,
+	})
 }

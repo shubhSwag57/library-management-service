@@ -29,7 +29,7 @@ func main() {
 	bookRepo := repository.NewBookRepository(db)
 
 	// Initialize service
-	libraryService := service.NewLibraryService(*userRepo, *bookRepo)
+	libraryService := service.NewLibraryService(userRepo, bookRepo)
 
 	// Start gRPC server in a goroutine
 	go startGRPCServer(libraryService)
@@ -39,7 +39,7 @@ func main() {
 }
 
 func startGRPCServer(libraryService *service.LibraryService) {
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", ":50052")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
